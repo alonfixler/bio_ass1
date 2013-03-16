@@ -13,6 +13,7 @@ public class Alignment{
 	String s2;
 	Vector<String> lettersVec;
 	int [][] scoreMatrix;
+	int [][] outputMatrix;
 	
 	public Alignment(String scoreMatrixFile,String s1,String s2)
 	{
@@ -21,6 +22,7 @@ public class Alignment{
 		String [] arr = {"A","T","G","C","U","N","*"};
 		lettersVec = new Vector<String>(Arrays.asList(arr));
 		scoreMatrix = new int [7][7];
+		outputMatrix = new int[s1.length()+1][s2.length()+1];
 		
 		
 		try{
