@@ -1,11 +1,7 @@
-import java.io.*;
-import java.sql.SQLException;
-import java.util.Properties;
-
 
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException{
+    public static void main(String[] args){
     	
     	String option1 = args[0];
         if(option1.equals("-g")){
@@ -33,13 +29,13 @@ public class Main {
 			}
 			else
 			{
-				
+				LocalAlignment align = new LocalAlignment(args[1],args[2],args[3]);
+				align.local();
 			}
 		}
 		else{
 			System.out.println("Usage: java Alignments.jar <option1> <option2> Score.matrix string1 string2");
-		}
-        
+		} 
     }
 }
 

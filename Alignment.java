@@ -12,35 +12,4 @@ public class Alignment{
 		this.s2 = s2;
 		
 	}
-	
-	public void global()
-	{
-		
-	}
-	
-	public void globalGap()
-	{
-	
-	}
-	
-	public void globalAffine()
-	{
-	
-	}
-	
-	public void local()
-	{
-		
-	}
-	
-	public void localGap()
-	{
-		
-	}
-	
-	public void localAffine()
-	{
-		
-	}
-	
 }
