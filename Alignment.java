@@ -53,13 +53,14 @@ public class Alignment{
 					{
 						if(strLine.charAt(i)>=48 && strLine.charAt(i)<=57)
 						{
-							scoreMatrix[lineIndex-9][matIndex] = Integer.parseInt("strLine.charAt(i)");
+							scoreMatrix[lineIndex-9][matIndex] = Character.getNumericValue(strLine.charAt(i));
 							matIndex++;
 						}
 						else if(strLine.charAt(i)=='-')
 						{
-							scoreMatrix[lineIndex-9][matIndex] = Integer.parseInt("strLine.charAt(i+1)")*(-1);
+							scoreMatrix[lineIndex-9][matIndex] = Character.getNumericValue(strLine.charAt(i+1))*(-1);
 							matIndex++;
+							i++;
 						}
 					}
 					lineIndex++;
