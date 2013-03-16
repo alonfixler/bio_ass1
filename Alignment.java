@@ -2,8 +2,7 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Vector;
+import java.util.Hashtable;
 
 
 
@@ -11,7 +10,7 @@ public class Alignment{
 	
 	String s1;
 	String s2;
-	Vector<String> lettersVec;
+	Hashtable<String,Integer> letters;
 	int [][] scoreMatrix;
 	int [][] outputMatrix;
 	
@@ -19,8 +18,14 @@ public class Alignment{
 	{
 		this.s1 = s1;
 		this.s2 = s2;
-		String [] arr = {"A","T","G","C","U","N","*"};
-		lettersVec = new Vector<String>(Arrays.asList(arr));
+		letters = new Hashtable<String,Integer>();
+		letters.put("A",0);
+		letters.put("T",1);
+		letters.put("G",2);
+		letters.put("C",3);
+		letters.put("U",4);
+		letters.put("N",5);
+		letters.put("*",6);
 		scoreMatrix = new int [7][7];
 		outputMatrix = new int[s1.length()+1][s2.length()+1];
 		
