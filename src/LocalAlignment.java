@@ -21,6 +21,7 @@ public class LocalAlignment extends Alignment{
 					intOutMatrix[i][j][1] = LEFT;	
 				max = Math.max(max, intOutMatrix[i][j][0]);
 			}
+		tracePath(max);
 		
 	}
 	
@@ -30,6 +31,30 @@ public class LocalAlignment extends Alignment{
 	}
 	
 	public void localAffine()
+	{
+		
+	}
+	
+	public void tracePath(int max)
+	{
+		// find calculated max value
+		if(max!=0)
+		{
+			outerloop:
+			for(int i=s1.length();i>0;i--)
+				for(int j=s2.length();j>0;j--)
+					if(intOutMatrix[i][j][0] == max)
+						break outerloop;
+		}
+		else
+		{
+			System.out.println("Empty string");
+			System.out.println("Empty string");
+			System.out.println("Score: 0");
+		}
+	}
+	
+	public void gapTracePath()
 	{
 		
 	}
