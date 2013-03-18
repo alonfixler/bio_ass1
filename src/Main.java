@@ -29,7 +29,7 @@ public class Main {
 			}
 			else
 			{
-				LocalAlignment align = new LocalAlignment(args[1],args[2],args[3]);
+				LocalAlignment align = new LocalAlignment(args[1],args[2],args[3],"-a");
 				align.local();
 			}
 		}

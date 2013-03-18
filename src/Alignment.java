@@ -7,14 +7,20 @@ import java.util.Hashtable;
 
 
 public class Alignment{
+	final int DIAG = 1;
+	final int UP = 2;
+	final int LEFT = 3;
 	
 	String s1;
 	String s2;
 	Hashtable<String,Integer> letters;
 	int [][] scoreMatrix;
-	int [][] outputMatrix;
+	int [][][] intOutMatrix;
+	double [][][] doubleOutMatrix;
+	int a;
+	int b;
 	
-	public Alignment(String scoreMatrixFile,String s1,String s2)
+	public Alignment(String scoreMatrixFile,String s1,String s2,String option)
 	{
 		this.s1 = s1;
 		this.s2 = s2;
@@ -27,7 +33,10 @@ public class Alignment{
 		letters.put("N",5);
 		letters.put("*",6);
 		scoreMatrix = new int [7][7];
-		outputMatrix = new int[s1.length()+1][s2.length()+1];
+		if(option.equals("-p"))
+			doubleOutMatrix = new double[s1.length()+1][s2.length()+1][2];
+		else
+			intOutMatrix = new int[s1.length()+1][s2.length()+1][2];
 		
 		
 		try{
@@ -64,6 +73,16 @@ public class Alignment{
 						}
 					}
 					lineIndex++;
+				}
+				
+				if(option.equals("-a"))
+				{
+					strLine = br.readLine();
+					strLine = br.readLine();
+					strLine = br.readLine();
+					a = Integer.parseInt(strLine.substring(2));
+					strLine = br.readLine();
+					b = Integer.parseInt(strLine.substring(2));
 				}
 			  }
 			  //Close the input stream
