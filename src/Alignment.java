@@ -7,16 +7,17 @@ import java.util.Hashtable;
 
 
 public class Alignment{
-	final int DIAG = 1;
-	final int UP = 2;
-	final int LEFT = 3;
+	final byte DIAG = 1;
+	final byte UP = 2;
+	final byte LEFT = 3;
 	
 	String s1;
 	String s2;
 	Hashtable<String,Integer> letters;
 	int [][] scoreMatrix;
-	int [][][] intOutMatrix;
-	double [][][] doubleOutMatrix;
+	int [][] intOutMatrix;
+	double [][] doubleOutMatrix;
+	byte [][] traceBack;
 	int a;
 	int b;
 	
@@ -34,9 +35,10 @@ public class Alignment{
 		letters.put("*",6);
 		scoreMatrix = new int [7][7];
 		if(option.equals("-p"))
-			doubleOutMatrix = new double[s1.length()+1][s2.length()+1][2];
+			doubleOutMatrix = new double[s1.length()+1][s2.length()+1];
 		else
-			intOutMatrix = new int[s1.length()+1][s2.length()+1][2];
+			intOutMatrix = new int[s1.length()+1][s2.length()+1];
+		traceBack = new byte[s1.length()+1][s2.length()+1];
 		
 		
 		try{

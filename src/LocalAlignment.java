@@ -12,14 +12,14 @@ public class LocalAlignment extends Alignment{
 		for(int i=1;i<s1.length()+1;i++)
 			for(int j=1;j<s2.length()+1;j++)
 			{
-				intOutMatrix[i][j][0] = Math.max(0, Math.max(intOutMatrix[i-1][j][0]+scoreMatrix[letters.get(s1.charAt(i-1))][6], Math.max(intOutMatrix[i-1][j-1][0]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))], intOutMatrix[i][j-1][0]+scoreMatrix[6][letters.get(s2.charAt(j-1))])));
-				if(intOutMatrix[i][j][0]==intOutMatrix[i-1][j-1][0]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))])
-					intOutMatrix[i][j][1] = DIAG;
-				else if(intOutMatrix[i][j][0]==intOutMatrix[i][j-1][0]+scoreMatrix[6][letters.get(s2.charAt(j-1))])
-					intOutMatrix[i][j][1] = UP;
-				else if(intOutMatrix[i][j][0] == intOutMatrix[i-1][j][0]+scoreMatrix[letters.get(s1.charAt(i-1))][6])
-					intOutMatrix[i][j][1] = LEFT;	
-				max = Math.max(max, intOutMatrix[i][j][0]);
+				intOutMatrix[i][j] = Math.max(0, Math.max(intOutMatrix[i-1][j]+scoreMatrix[letters.get(s1.charAt(i-1))][6], Math.max(intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))], intOutMatrix[i][j-1]+scoreMatrix[6][letters.get(s2.charAt(j-1))])));
+				if(intOutMatrix[i][j]==intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))])
+					traceBack[i][j] = DIAG;
+				else if(intOutMatrix[i][j]==intOutMatrix[i][j-1]+scoreMatrix[6][letters.get(s2.charAt(j-1))])
+					traceBack[i][j] = UP;
+				else if(intOutMatrix[i][j] == intOutMatrix[i-1][j]+scoreMatrix[letters.get(s1.charAt(i-1))][6])
+					traceBack[i][j] = LEFT;	
+				max = Math.max(max, intOutMatrix[i][j]);
 			}
 		tracePath(max);
 		
@@ -43,7 +43,7 @@ public class LocalAlignment extends Alignment{
 			outerloop:
 			for(int i=s1.length();i>0;i--)
 				for(int j=s2.length();j>0;j--)
-					if(intOutMatrix[i][j][0] == max)
+					if(intOutMatrix[i][j] == max)
 						break outerloop;
 		}
 		else
