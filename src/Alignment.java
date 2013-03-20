@@ -14,7 +14,7 @@ public class Alignment{
 	String s1;
 	String s2;
 	Hashtable<String,Integer> letters;
-	int [][] scoreMatrix;
+	char [][] scoreMatrix;
 	int [][] intOutMatrix;
 	double [][] doubleOutMatrix;
 	byte [][] traceBack;
@@ -33,7 +33,7 @@ public class Alignment{
 		letters.put("U",4);
 		letters.put("N",5);
 		letters.put("*",6);
-		scoreMatrix = new int [7][7];
+		scoreMatrix = new char [7][7];
 		if(option.equals("-p"))
 			doubleOutMatrix = new double[s1.length()+1][s2.length()+1];
 		else
@@ -64,12 +64,12 @@ public class Alignment{
 					{
 						if(strLine.charAt(i)>=48 && strLine.charAt(i)<=57)
 						{
-							scoreMatrix[lineIndex-9][matIndex] = Character.getNumericValue(strLine.charAt(i));
+							scoreMatrix[lineIndex-9][matIndex] = strLine.charAt(i);
 							matIndex++;
 						}
 						else if(strLine.charAt(i)=='-')
 						{
-							scoreMatrix[lineIndex-9][matIndex] = Character.getNumericValue(strLine.charAt(i+1))*(-1);
+							scoreMatrix[lineIndex-9][matIndex] = (char)(strLine.charAt(i+1)*(-1));
 							matIndex++;
 							i++;
 						}
