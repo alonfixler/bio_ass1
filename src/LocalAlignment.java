@@ -28,6 +28,8 @@ public class LocalAlignment extends Alignment{
 	public void localGap()
 	{
 		double max=0;
+		int gapSize=0;
+		int tempDirection;
 		for(int i=1;i<s1.length()+1;i++)
 			for(int j=1;j<s2.length()+1;j++)
 				for(int k=0,l=0;k<j || l<i;k++,l++)
@@ -38,11 +40,11 @@ public class LocalAlignment extends Alignment{
 					}
 					else if(k<j)
 					{
-						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j], Math.max(doubleOutMatrix[i-1][j]+scoreMatrix[letters.get(s1.charAt(i-1))][6], Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))], doubleOutMatrix[i][j-1]+scoreMatrix[6][letters.get(s2.charAt(j-1))])));
+						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j],Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],doubleOutMatrix[i][k]-(-10+Math.log(j-k))));
 					}
 					else
 					{
-						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j], Math.max(doubleOutMatrix[i-1][j]+scoreMatrix[letters.get(s1.charAt(i-1))][6], Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))], doubleOutMatrix[i][j-1]+scoreMatrix[6][letters.get(s2.charAt(j-1))])));
+						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j],Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],doubleOutMatrix[l][j]-(-10+Math.log(i-l))));
 					}
 					
 					
