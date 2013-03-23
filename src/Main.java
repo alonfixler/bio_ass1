@@ -7,31 +7,34 @@ public class Main {
         if(option1.equals("-g")){
 			if(args[1].equals("-p"))
 			{
-				
+				globalAlignment align = new globalAlignment(args[2],args[3],args[4],option1,"-p");
+				align.globalGap();
 			}
 			else if(args[1].equals("-a"))
 			{
-				
+				globalAlignment align = new globalAlignment(args[2],args[3],args[4],option1,"-a");
+				align.globalGap();
 			}
 			else
 			{
-				
+				globalAlignment align = new globalAlignment(args[2],args[3],args[4],option1,"");
+				align.globalGap();
 			}
 		}
 		else if(option1.equals("-l")){
 			if(args[1].equals("-p"))
 			{
-				LocalAlignment align = new LocalAlignment(args[2],args[3],args[4],"-p");
+				LocalAlignment align = new LocalAlignment(args[2],args[3],args[4],option1,"-p");
 				align.localGap();
 			}
 			else if(args[1].equals("-a"))
 			{
-				LocalAlignment align = new LocalAlignment(args[2],args[3],args[4],"-a");
+				LocalAlignment align = new LocalAlignment(args[2],args[3],args[4],option1,"-a");
 				align.localAffine();
 			}
 			else
 			{
-				LocalAlignment align = new LocalAlignment(args[1],args[2],args[3],"-l");
+				LocalAlignment align = new LocalAlignment(args[1],args[2],args[3],option1,"");
 				align.local();
 			}
 		}

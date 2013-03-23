@@ -1,9 +1,9 @@
 
 public class LocalAlignment extends Alignment{
 	
-	public LocalAlignment(String scoreMatrixFile,String s1,String s2,String option)
+	public LocalAlignment(String scoreMatrixFile,String s1,String s2,String option1,String option2)
 	{
-		super(scoreMatrixFile,s1,s2,option);
+		super(scoreMatrixFile,s1,s2,option1,option2);
 	}
 	
 	public void local()
@@ -34,13 +34,13 @@ public class LocalAlignment extends Alignment{
 				{
 					if(k<j && l<i)
 					{
-						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j], Math.max(doubleOutMatrix[l][j]-(-10+Math.log(i-l)), Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))], doubleOutMatrix[i][k]-(-10+Math.log(j-k)))));
-						if(doubleOutMatrix[i][j] == doubleOutMatrix[l][j]-(-10+Math.log(i-l)))
+						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j], Math.max(doubleOutMatrix[l][j]+(-10+Math.log(i-l)), Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))], doubleOutMatrix[i][k]+(-10+Math.log(j-k)))));
+						if(doubleOutMatrix[i][j] == doubleOutMatrix[l][j]+(-10+Math.log(i-l)))
 						{
 							gapSize[i][j] = l;
 							traceBack[i][j] = LEFT;
 						}
-						else if(doubleOutMatrix[i][j] == doubleOutMatrix[i][k]-(-10+Math.log(j-k)))
+						else if(doubleOutMatrix[i][j] == doubleOutMatrix[i][k]+(-10+Math.log(j-k)))
 						{
 							gapSize[i][j] = k;
 							traceBack[i][j] = UP;
@@ -52,8 +52,8 @@ public class LocalAlignment extends Alignment{
 					}
 					else if(k<j)
 					{
-						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j],Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],doubleOutMatrix[i][k]-(-10+Math.log(j-k))));
-						if(doubleOutMatrix[i][j] == doubleOutMatrix[i][k]-(-10+Math.log(j-k)))
+						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j],Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],doubleOutMatrix[i][k]+(-10+Math.log(j-k))));
+						if(doubleOutMatrix[i][j] == doubleOutMatrix[i][k]+(-10+Math.log(j-k)))
 						{
 							gapSize[i][j] = k;
 							traceBack[i][j] = UP;
@@ -65,8 +65,8 @@ public class LocalAlignment extends Alignment{
 					}
 					else
 					{
-						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j],Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],doubleOutMatrix[l][j]-(-10+Math.log(i-l))));
-						if(doubleOutMatrix[i][j] == doubleOutMatrix[l][j]-(-10+Math.log(i-l)))
+						doubleOutMatrix[i][j] = Math.max(doubleOutMatrix[i][j],Math.max(doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],doubleOutMatrix[l][j]+(-10+Math.log(i-l))));
+						if(doubleOutMatrix[i][j] == doubleOutMatrix[l][j]+(-10+Math.log(i-l)))
 						{
 							gapSize[i][j] = l;
 							traceBack[i][j] = LEFT;
@@ -149,7 +149,7 @@ public class LocalAlignment extends Alignment{
 			outerloop:
 			for(int i=s1.length();i>0;i--)
 				for(int j=s2.length();j>0;j--)
-					if(option.equals("-p"))
+					if(option2.equals("-p"))
 					{
 						if(doubleOutMatrix[i][j] == max)
 						{
