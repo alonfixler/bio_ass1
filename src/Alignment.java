@@ -84,21 +84,9 @@ public class Alignment{
 				else
 				{
 					split = strLine.split(" +");
-					//for(int i=0,matIndex=0;i<split.length;i++)
 					for(int i=1;i<split.length;i++)
 					{
 						scoreMatrix[lineIndex-9][i-1] = Integer.parseInt(split[i]);
-						/*if(strLine.charAt(i)>=48 && strLine.charAt(i)<=57)
-						{
-							scoreMatrix[lineIndex-9][matIndex] = Integer.parseInt(strLine.substring(i,strLine.indexOf(" ", i)));
-							matIndex++;
-						}
-						else if(strLine.charAt(i)=='-')
-						{
-							scoreMatrix[lineIndex-9][matIndex] = Integer.parseInt(strLine.substring(i+1,strLine.indexOf(" ", i+1)))*(-1);
-							matIndex++;
-							i++;
-						}*/
 					}
 					lineIndex++;
 				}
