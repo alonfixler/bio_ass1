@@ -14,7 +14,7 @@ public class Alignment{
 	String s1;
 	String s2;
 	Hashtable<Character,Integer> letters;
-	char [][] scoreMatrix;
+	int [][] scoreMatrix;
 	int [][] intOutMatrix;
 	double [][] doubleOutMatrix;
 	byte [][] traceBack;
@@ -39,7 +39,7 @@ public class Alignment{
 		letters.put('U',4);
 		letters.put('N',5);
 		letters.put('*',6);
-		scoreMatrix = new char [7][7];
+		scoreMatrix = new int [7][7];
 		this.option1 = option1;
         this.option2 = option2;
 
@@ -73,6 +73,7 @@ public class Alignment{
 			  String strLine;
 			  //Read File Line By Line
 			  int lineIndex = 1;
+			  String[] split;
 			  while ((strLine = br.readLine()) != null && lineIndex<16) 
 			  {
 				if(lineIndex<9)
@@ -82,19 +83,22 @@ public class Alignment{
 				}
 				else
 				{
-					for(int i=0,matIndex=0;i<strLine.length();i++)
+					split = strLine.split(" +");
+					//for(int i=0,matIndex=0;i<split.length;i++)
+					for(int i=1;i<split.length;i++)
 					{
-						if(strLine.charAt(i)>=48 && strLine.charAt(i)<=57)
+						scoreMatrix[lineIndex-9][i-1] = Integer.parseInt(split[i]);
+						/*if(strLine.charAt(i)>=48 && strLine.charAt(i)<=57)
 						{
-							scoreMatrix[lineIndex-9][matIndex] = strLine.charAt(i);
+							scoreMatrix[lineIndex-9][matIndex] = Integer.parseInt(strLine.substring(i,strLine.indexOf(" ", i)));
 							matIndex++;
 						}
 						else if(strLine.charAt(i)=='-')
 						{
-							scoreMatrix[lineIndex-9][matIndex] = (char)(strLine.charAt(i+1)*(-1));
+							scoreMatrix[lineIndex-9][matIndex] = Integer.parseInt(strLine.substring(i+1,strLine.indexOf(" ", i+1)))*(-1);
 							matIndex++;
 							i++;
-						}
+						}*/
 					}
 					lineIndex++;
 				}

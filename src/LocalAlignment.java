@@ -15,9 +15,9 @@ public class LocalAlignment extends Alignment{
 				intOutMatrix[i][j] = Math.max(0, Math.max(intOutMatrix[i-1][j]+scoreMatrix[letters.get(s1.charAt(i-1))][6], Math.max(intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))], intOutMatrix[i][j-1]+scoreMatrix[6][letters.get(s2.charAt(j-1))])));
 				if(intOutMatrix[i][j]==intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))])
 					traceBack[i][j] = DIAG;
-				else if(intOutMatrix[i][j]==intOutMatrix[i][j-1]+scoreMatrix[6][letters.get(s2.charAt(j-1))])
+				else if(intOutMatrix[i][j]==intOutMatrix[i-1][j]+scoreMatrix[6][letters.get(s1.charAt(i-1))])
 					traceBack[i][j] = UP;
-				else if(intOutMatrix[i][j] == intOutMatrix[i-1][j]+scoreMatrix[letters.get(s1.charAt(i-1))][6])
+				else if(intOutMatrix[i][j] == intOutMatrix[i][j-1]+scoreMatrix[letters.get(s2.charAt(j-1))][6])
 					traceBack[i][j] = LEFT;	
 				max = Math.max(max, intOutMatrix[i][j]);
 			}

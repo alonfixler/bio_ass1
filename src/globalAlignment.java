@@ -14,9 +14,9 @@ public class globalAlignment extends Alignment{
         initBaseCases();
         for(i=1;i<s1.length()+1;i++){
             for(j=1;j<s2.length()+1;j++){
-                leftICell = intOutMatrix[i-1][j]+scoreMatrix[letters.get(s1.charAt(i-1))][6];
+                leftICell = intOutMatrix[i][j-1]+scoreMatrix[letters.get(s2.charAt(j-1))][6];
                 diagICell = intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))];
-                upICell = intOutMatrix[i][j-1]+scoreMatrix[6][letters.get(s2.charAt(j-1))];
+                upICell = intOutMatrix[i-1][j]+scoreMatrix[6][letters.get(s1.charAt(i-1))];
                 curICell = intOutMatrix[i][j] = Math.max(upICell, Math.max(diagICell, leftICell));
 
                 if (curICell==diagICell) 	traceBack[i][j] = DIAG;
@@ -89,7 +89,7 @@ public class globalAlignment extends Alignment{
 
     public void tracePath(double max)
     {
-        print(i,j);
+        print(s1.length(),s2.length());
         System.out.println("Score: "+max);
     }
 

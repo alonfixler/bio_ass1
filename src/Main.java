@@ -17,7 +17,7 @@ public class Main {
 			}
 			else
 			{
-				globalAlignment align = new globalAlignment(args[2],args[3],args[4],option1,"");
+				globalAlignment align = new globalAlignment(args[1],args[2],args[3],option1,"");
 				align.global();
 			}
 		}
