@@ -46,7 +46,7 @@ public class Main {
             System.out.println("option2: [-p = Regular Gap Function | -a = Affine Gap Function | No Param = No Gap Function]");        }
     	}
     	catch (Exception e){//Catch exception if any
-			  System.err.println("Please check your syntax.");
+    			System.err.println("Please check your syntax. Your sequence contains ilegal characters or your arguments aren't valid.");
 			  }
     }
 }

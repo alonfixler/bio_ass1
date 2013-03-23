@@ -104,7 +104,7 @@ public class Alignment{
 			  }
 	}
 	
-	public double[] G(int i, int j){		// calculating match/mismatch value
+	public double[] G(int i, int j) throws RuntimeException{		// calculating match/mismatch value
 		if(option2.equals("-p"))
 	        return new double[]{doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],DIAG};
 		else
@@ -112,78 +112,90 @@ public class Alignment{
 	    }
 
     public double[] E(int i, int j){	// calculating a gap within the same matrix row
-        if(option2.equals("-p")){
-            if(j==0){
-                return new double[]{gapPenalty(i),i};
-            }
-            else{
-                double max=-Double.MAX_VALUE,temp,kVal=0;
-                for(int k=0;k<j;k++){
-                    temp = doubleOutMatrix[i][k]+gapPenalty(j-k);
-                    if(max < temp){
-                        max = temp;
-                        kVal = j-k;
-                    }
-                }
-                return new double[]{max,kVal};
-            }
-        }
-        else
+    	double temp,kVal=0,max=0;
+        if(option2.equals("-p"))
         {
+        	if(option1.equals("-g"))
+        	{
+        		if(j==0)
+        		{
+            		return new double[]{gapPenalty(i),i};
+        		}
+        		else
+        		{
+        			max = Double.NEGATIVE_INFINITY;
+                }
+        	}
+        	for(int k=0;k<j;k++)
+        	{
+                temp = doubleOutMatrix[i][k]+gapPenalty(j-k);
+                if(max <= temp){
+                    max = temp;
+                    kVal = j-k;
+                }
+            }
+            return new double[]{max,kVal};
+            
+        }
+        else				// affine case
+        {
+        	eGapSize = 1;
             if(j == 0){
                 return new double[]{(-a-(i*b)),i};
             }
-            else{
-            E[i][j] = Math.max(E[i][j-1],intOutMatrix[i][j-1]-a) -b;
-                if(E[i][j] == E[i][j-1]-b)
-                {
-                	if(traceBack[i][j-1] == LEFT)
-                		eGapSize = gapSize[i][j-1]+1;
-                	else
-                		eGapSize = 1;
-                }
-                else
-                    eGapSize = 1;
-            return new double[]{E[i][j],eGapSize};
+            else
+            {
+            	E[i][j] = Math.max(E[i][j-1],intOutMatrix[i][j-1]-a) -b;
+	            if(E[i][j] == E[i][j-1]-b)
+	            {
+	            	if(traceBack[i][j-1] == LEFT)
+	            		eGapSize = gapSize[i][j-1]+1;
+	            }
+	            return new double[]{E[i][j],eGapSize};
             }
         }
     }
 
     public double[] F(int i, int j){		// calculating a gap within the same matrix column
+    	double temp,kVal=0,max=0;
         if(option2.equals("-p"))			// the arbitrary gap case
         {
-            if(i == 0){
-                return new double[]{gapPenalty(j),j};
+        	if(option1.equals("-g"))
+        	{
+        		if(i == 0)
+        		{
+            		return new double[]{gapPenalty(j),j};
+        		}
+        		else
+        		{
+    	            max=Double.NEGATIVE_INFINITY;
+            	}
             }
-            else{
-	            double max=-Double.MAX_VALUE,temp,kVal=0;
-	            for(int k=0;k<i;k++){
-	                temp = doubleOutMatrix[k][j]+gapPenalty(i-k);
-	                if(max < temp){
-	                    max = temp;
-	                    kVal = i-k;
-	                }
-	            }
-	            return new double[]{max,kVal};
-        	}
+            for(int k=0;k<i;k++)
+            {
+                temp = doubleOutMatrix[k][j]+gapPenalty(i-k);
+                if(max <= temp){
+                    max = temp;
+                    kVal = i-k;
+                }
+            }
+            return new double[]{max,kVal};
         }
         else								// the affine gap case
         {
+        	fGapSize = 1;
             if(i == 0){
                 return new double[]{(-a-(j*b)),j};
             }
-            else{
-            F[i][j] = Math.max(F[i-1][j],intOutMatrix[i-1][j]-a) -b;
-            if(F[i][j] == F[i-1][j]-b)
-            {
-            	if(traceBack[i-1][j] == UP)
-            		fGapSize = gapSize[i-1][j]+1;
-            	else
-            		fGapSize = 1;
-            }
             else
-                fGapSize = 1;
-            return new double[]{F[i][j],fGapSize};
+            {
+	            F[i][j] = Math.max(F[i-1][j],intOutMatrix[i-1][j]-a) -b;
+	            if(F[i][j] == F[i-1][j]-b)
+	            {
+	            	if(traceBack[i-1][j] == UP)
+	            		fGapSize = gapSize[i-1][j]+1;
+	            }
+	            return new double[]{F[i][j],fGapSize};
             }
         }
     }
@@ -198,10 +210,10 @@ public class Alignment{
 		String outString2 = "";
         while((i>0 || j>0) && traceBack[i][j]!=0)
         {
+        	if(option1.equals("-l") && (i==1 || j==1))		// making sure not to be out of boundaries
+                 break;
             if(option2.equals("")) // alignment without gaps
             {
-                if(option1.equals("-l") && (i==0 || j==0))		// making sure not to be out of boundaries
-                    break;
                 if(traceBack[i][j]==DIAG)
                 {
                     outString1 = s1.substring(i-1,i) + outString1;
@@ -221,10 +233,9 @@ public class Alignment{
                     outString2 = s2.substring(j-1,j) + outString2;
                     j--;
                 }
-            } else					// allignment with gaps
+            } 
+            else					// allignment with gaps
             {
-                if(option1.equals("-l") && (i==0 || j==0))		// making sure not to be out of boundaries
-                    break;
                 if(traceBack[i][j]==DIAG)
                 {
                     outString1 = s1.substring(i-1,i) + outString1;
@@ -252,6 +263,7 @@ public class Alignment{
                 }
             }
         }
+        System.out.println();
 		System.out.println(outString1);
 		System.out.println(outString2);
 	}

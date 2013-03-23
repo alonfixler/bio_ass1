@@ -10,7 +10,7 @@ public class globalAlignment extends Alignment{
         super(scoreMatrixFile,s1,s2,option1,option2);
     }
 
-    public void global()   //global alignment without gaps
+    public void global() throws RuntimeException  //global alignment without gaps
     {
         initBaseCases();   //initialize the first row and column (base cases)
         for(i=1;i<s1.length()+1;i++){     //iterate over the table row after row starting from (1,1)
@@ -94,7 +94,7 @@ public class globalAlignment extends Alignment{
         return (Math.log(k)-10);
     }
 
-    public void initBaseCases(){    //initialize the first row & column (base cases) - without gaps
+    public void initBaseCases() throws RuntimeException{    //initialize the first row & column (base cases) - without gaps
         intOutMatrix[0][0] = 0;
         j=0;
         for (i=1;i<s1.length()+1;i++){
