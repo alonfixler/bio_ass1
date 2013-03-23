@@ -1,7 +1,7 @@
 
 public class globalAlignment extends Alignment{
 
-    int i,j,curICell,upICell,diagICell,leftICell;
+    int i,j,cur,up,diag,left;
     double[] eValue,fValue,gValue;
     double vValue;
     public globalAlignment(String scoreMatrixFile,String s1,String s2, String option1,String option2)
@@ -14,14 +14,14 @@ public class globalAlignment extends Alignment{
         initBaseCases();
         for(i=1;i<s1.length()+1;i++){
             for(j=1;j<s2.length()+1;j++){
-                leftICell = intOutMatrix[i][j-1]+scoreMatrix[letters.get(s2.charAt(j-1))][6];
-                diagICell = intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))];
-                upICell = intOutMatrix[i-1][j]+scoreMatrix[6][letters.get(s1.charAt(i-1))];
-                curICell = intOutMatrix[i][j] = Math.max(upICell, Math.max(diagICell, leftICell));
+                left = intOutMatrix[i][j-1]+scoreMatrix[letters.get(s2.charAt(j-1))][6];
+                diag = intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))];
+                up = intOutMatrix[i-1][j]+scoreMatrix[6][letters.get(s1.charAt(i-1))];
+                cur = intOutMatrix[i][j] = Math.max(up, Math.max(diag, left));
 
-                if (curICell==diagICell) 	traceBack[i][j] = DIAG;
-                else if (curICell==upICell) 	traceBack[i][j] = UP;
-                else if (curICell==leftICell) 	traceBack[i][j] = LEFT;
+                if (cur==diag) 	traceBack[i][j] = DIAG;
+                else if (cur==up) 	traceBack[i][j] = UP;
+                else if (cur==left) 	traceBack[i][j] = LEFT;
             }
         }
         tracePath(vValue);
@@ -103,10 +103,12 @@ public class globalAlignment extends Alignment{
         j=0;
         for (i=1;i<s1.length()+1;i++){
             intOutMatrix[i][j] =  intOutMatrix[i-1][j]+scoreMatrix[letters.get(s1.charAt(i-1))][6];
+            traceBack[i][j] = UP;
         }
         i=0;
         for (j=1;j<s2.length()+1;j++){
             intOutMatrix[i][j] =  intOutMatrix[i][j-1]+scoreMatrix[letters.get(s2.charAt(j-1))][6];
+            traceBack[i][j] = LEFT;
         }
     }
 
