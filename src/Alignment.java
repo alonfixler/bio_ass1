@@ -29,8 +29,8 @@ public class Alignment{
 	
 	public Alignment(String scoreMatrixFile,String s1,String s2,String option1, String option2)
 	{
-		this.s1 = s1;
-		this.s2 = s2;
+		this.s1 = s1.toUpperCase();
+		this.s2 = s2.toUpperCase();
 		letters = new Hashtable<Character,Integer>();
 		letters.put('A',0);
 		letters.put('T',1);
@@ -234,16 +234,20 @@ public class Alignment{
                 }
                 else if (traceBack[i][j]==UP)
                 {
-                    outString1 = s1.substring(i-1,i) + outString1;
                     for(int k=0;k<gapSize[i][j];k++)
+                    {
                         outString2 = "_" + outString2;
+                        outString1 = s1.substring(i-1-k,i-k) + outString1;
+                    }
                     i = i-gapSize[i][j];
                 }
                 else
                 {
                     for(int k=0;k<gapSize[i][j];k++)
+                    {
                         outString1 = "_" + outString1;
-                    outString2 = s2.substring(j-1,j) + outString2;
+                        outString2 = s2.substring(j-1-k,j-k) + outString2;
+                    }
                     j = j-gapSize[i][j];
                 }
             }

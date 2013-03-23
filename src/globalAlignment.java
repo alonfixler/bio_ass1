@@ -24,7 +24,7 @@ public class globalAlignment extends Alignment{
                 else if (cur==left) 	traceBack[i][j] = LEFT;
             }
         }
-        tracePath(vValue);
+        tracePath(cur);
     }
 
     public void globalGap()
