@@ -3,6 +3,7 @@ public class Main {
 
     public static void main(String[] args){
     	
+    	try{
     	String option1 = args[0];
         if(option1.equals("-g")){    //Global Alignment is used
 			if(args[1].equals("-p"))  //Use the regular Gap function
@@ -43,6 +44,10 @@ public class Main {
             System.out.println("Options:");
             System.out.println("option1: [-l = Local Alignment | -g = Global Alignment]");
             System.out.println("option2: [-p = Regular Gap Function | -a = Affine Gap Function | No Param = No Gap Function]");        }
+    	}
+    	catch (Exception e){//Catch exception if any
+			  System.err.println("Please check your syntax.");
+			  }
     }
 }
 
