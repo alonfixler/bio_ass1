@@ -118,10 +118,12 @@ public class globalAlignment extends Alignment{
         j=0;
         for (i=1;i<s1.length()+1;i++){
             doubleOutMatrix[i][j] =  gapPenalty(i);
+            traceBack[i][j] = UP;
         }
         i=0;
         for (j=1;j<s2.length()+1;j++){
             doubleOutMatrix[i][j] =  gapPenalty(j);
+            traceBack[i][j] = LEFT;
         }
     }
 
@@ -131,11 +133,12 @@ public class globalAlignment extends Alignment{
         j=0;
         for (i=1;i<s1.length()+1;i++){
             E[i][j] = intOutMatrix[i][j] =  (int)E(i,0)[0];
-
+            traceBack[i][j] = UP;
         }
         i=0;
         for (j=1;j<s2.length()+1;j++){
             F[i][j] = intOutMatrix[i][j] =  (int)F(0,j)[0];
+            traceBack[i][j] = LEFT;
         }
     }
 
