@@ -29,7 +29,7 @@ public class Alignment{
 	
 	public Alignment(String scoreMatrixFile,String s1,String s2,String option1, String option2)
 	{
-		this.s1 = s1.toUpperCase();
+		this.s1 = s1.toUpperCase();			// making sure the sequences are consisted of capital letters
 		this.s2 = s2.toUpperCase();
 		letters = new Hashtable<Character,Integer>();
 		letters.put('A',0);
@@ -43,7 +43,7 @@ public class Alignment{
 		this.option1 = option1;
         this.option2 = option2;
 
-        if(option2.equals("-p"))		// if we're in the arbitrary gap functio we'll init a double output matrix
+        if(option2.equals("-p"))		// if we're in the arbitrary gap function we'll init a double output matrix
 		{
 			doubleOutMatrix = new double[s1.length()+1][s2.length()+1];
 			gapSize = new int[s1.length()+1][s2.length()+1];
@@ -74,7 +74,7 @@ public class Alignment{
 			  String[] split;
 			  while ((strLine = br.readLine()) != null && lineIndex<16) 
 			  {
-				if(lineIndex<9)
+				if(lineIndex<9)			// for the unused lines in the beginning of the score matrix file
 				{
 					lineIndex++;
 					continue;
@@ -89,7 +89,7 @@ public class Alignment{
 					lineIndex++;
 				}
 			  }
-			  if(option2.equals("-a"))
+			  if(option2.equals("-a"))		// parsing the affine function coefficients
 				{
 					strLine = br.readLine();
 					strLine = br.readLine();
@@ -104,14 +104,14 @@ public class Alignment{
 			  }
 	}
 	
-	public double[] G(int i, int j){
+	public double[] G(int i, int j){		// calculating match/mismatch value
 		if(option2.equals("-p"))
 	        return new double[]{doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],DIAG};
 		else
 	        return new double[]{intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],DIAG};
 	    }
 
-    public double[] E(int i, int j){
+    public double[] E(int i, int j){	// calculating a gap within the same matrix row
         if(option2.equals("-p")){
             if(j==0){
                 return new double[]{gapPenalty(i),i};
@@ -149,8 +149,8 @@ public class Alignment{
         }
     }
 
-    public double[] F(int i, int j){
-        if(option2.equals("-p"))
+    public double[] F(int i, int j){		// calculating a gap within the same matrix column
+        if(option2.equals("-p"))			// the arbitrary gap case
         {
             if(i == 0){
                 return new double[]{gapPenalty(j),j};
@@ -167,7 +167,7 @@ public class Alignment{
 	            return new double[]{max,kVal};
         	}
         }
-        else
+        else								// the affine gap case
         {
             if(i == 0){
                 return new double[]{(-a-(j*b)),j};
@@ -188,19 +188,19 @@ public class Alignment{
         }
     }
     
-    public double gapPenalty(int k){
+    public double gapPenalty(int k){		// gap penalty for the arbitrary gap function
         return (Math.log(k)-10);
     }
 	
-	public void print(int i,int j)
+	public void print(int i,int j)			// printing the two aligned sequences
 	{
 		String outString1 = "";
 		String outString2 = "";
         while((i>0 || j>0) && traceBack[i][j]!=0)
         {
-            if(option2.equals("")) //alignment without gaps
+            if(option2.equals("")) // alignment without gaps
             {
-                if(option1.equals("-l") && (i==0 || j==0))
+                if(option1.equals("-l") && (i==0 || j==0))		// making sure not to be out of boundaries
                     break;
                 if(traceBack[i][j]==DIAG)
                 {
@@ -221,9 +221,9 @@ public class Alignment{
                     outString2 = s2.substring(j-1,j) + outString2;
                     j--;
                 }
-            } else
+            } else					// allignment with gaps
             {
-                if(option1.equals("-l") && (i==0 || j==0))
+                if(option1.equals("-l") && (i==0 || j==0))		// making sure not to be out of boundaries
                     break;
                 if(traceBack[i][j]==DIAG)
                 {
