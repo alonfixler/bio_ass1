@@ -13,7 +13,7 @@ public class Alignment{
 	
 	String s1;
 	String s2;
-	Hashtable<String,Integer> letters;
+	Hashtable<Character,Integer> letters;
 	char [][] scoreMatrix;
 	int [][] intOutMatrix;
 	double [][] doubleOutMatrix;
@@ -25,28 +25,30 @@ public class Alignment{
 	int [][] eGapSize;
 	int [][] F;
 	int [][] fGapSize;
-	String option;
+	String option1,option2;
 	
-	public Alignment(String scoreMatrixFile,String s1,String s2,String option)
+	public Alignment(String scoreMatrixFile,String s1,String s2,String option1, String option2)
 	{
 		this.s1 = s1;
 		this.s2 = s2;
-		letters = new Hashtable<String,Integer>();
-		letters.put("A",0);
-		letters.put("T",1);
-		letters.put("G",2);
-		letters.put("C",3);
-		letters.put("U",4);
-		letters.put("N",5);
-		letters.put("*",6);
+		letters = new Hashtable<Character,Integer>();
+		letters.put('A',0);
+		letters.put('T',1);
+		letters.put('G',2);
+		letters.put('C',3);
+		letters.put('U',4);
+		letters.put('N',5);
+		letters.put('*',6);
 		scoreMatrix = new char [7][7];
-		this.option = option;
-		if(option.equals("-p"))		// if we're in the arbitrary gap functio we'll init a double output matrix
+		this.option1 = option1;
+        this.option2 = option2;
+
+        if(option2.equals("-p"))		// if we're in the arbitrary gap functio we'll init a double output matrix
 		{
 			doubleOutMatrix = new double[s1.length()+1][s2.length()+1];
 			gapSize = new int[s1.length()+1][s2.length()+1];
 		}
-		else if(option.equals("-a"))
+		else if(option2.equals("-a"))
 		{
 			intOutMatrix = new int[s1.length()+1][s2.length()+1];
 			gapSize = new int[s1.length()+1][s2.length()+1];
@@ -57,7 +59,8 @@ public class Alignment{
 		}
 		else					// if we're in the regular local alignment we'll init an int output matrix
 			intOutMatrix = new int[s1.length()+1][s2.length()+1];		
-		traceBack = new byte[s1.length()+1][s2.length()+1];
+
+        traceBack = new byte[s1.length()+1][s2.length()+1];
 		
 		
 		try{
@@ -96,7 +99,7 @@ public class Alignment{
 					lineIndex++;
 				}
 				
-				if(option.equals("-a"))
+				if(option2.equals("-a"))
 				{
 					strLine = br.readLine();
 					strLine = br.readLine();
@@ -118,43 +121,47 @@ public class Alignment{
 	    }
 
     public double[] E(int i, int j){
-        if(j==0){
-            return new double[]{-gapPenalty(i),i};
+        if(option2.equals("-p")){
+            if(j==0){
+                return new double[]{gapPenalty(i),i};
+            }
+            else{
+                double max=Double.MIN_VALUE,temp,kVal=0;
+                for(int k=0;k<j;k++){
+                    temp = doubleOutMatrix[i][k]+gapPenalty(j-k);
+                    if(max < temp){
+                        max = temp;
+                        kVal = k;
+                    }
+                }
+                return new double[]{max,kVal};
+            }
         }
-        else{
-            if(option.equals("-p"))
-            {
-            	double max=Double.MIN_VALUE,temp,kVal=0;
-	            for(int k=1;k<j;k++){
-	                temp = doubleOutMatrix[i][k]+gapPenalty(j-k);
-	                if(max < temp){
-	                    max = temp;
-	                    kVal = k;
-	                }
-	            }
-	            return new double[]{max,kVal};
+        else
+        {
+            if(j == 0){
+                return new double[]{(-a-(i*b)),i};
             }
-            else
-            {
-            	E[i][j] = Math.max(E[i][j-1],intOutMatrix[i][j-1]-a) -b;
-            	if(E[i][j] == E[i][j-1]-b)
-            		eGapSize[i][j] = eGapSize[i][j-1]+1;
-            	else
-            		eGapSize[i][j] = 1;
-            	return new double[]{E[i][j],eGapSize[i][j]};
+            else{
+            E[i][j] = Math.max(E[i][j-1],intOutMatrix[i][j-1]-a) -b;
+                if(E[i][j] == E[i][j-1]-b)
+                    eGapSize[i][j] = eGapSize[i][j-1]+1;
+                else
+                    eGapSize[i][j] = 1;
+            return new double[]{E[i][j],eGapSize[i][j]};
             }
-           
         }
     }
+
     public double[] F(int i, int j){
-        if(i==0){
-            return new double[]{-gapPenalty(j),j};
-        }
-        else{
-        	if(option.equals("-p"))
-        	{
+        if(option2.equals("-p"))
+        {
+            if(i == 0){
+                return new double[]{gapPenalty(j),j};
+            }
+            else{
 	            double max=Double.MIN_VALUE,temp,kVal=0;
-	            for(int k=1;k<i;k++){
+	            for(int k=0;k<i;k++){
 	                temp = doubleOutMatrix[k][j]+gapPenalty(i-k);
 	                if(max < temp){
 	                    max = temp;
@@ -163,15 +170,20 @@ public class Alignment{
 	            }
 	            return new double[]{max,kVal};
         	}
-        	else
-        	{
-        		F[i][j] = Math.max(F[i-1][j],intOutMatrix[i-1][j]-a) -b;
-            	if(F[i][j] == E[i-1][j]-b)
-            		fGapSize[i][j] = fGapSize[i-1][j]+1;
-            	else
-            		fGapSize[i][j] = 1;
-            	return new double[]{F[i][j],fGapSize[i][j]};
-        	}
+        }
+        else
+        {
+            if(i == 0){
+                return new double[]{(-a-(j*b)),j};
+            }
+            else{
+            F[i][j] = Math.max(F[i-1][j],intOutMatrix[i-1][j]-a) -b;
+            if(F[i][j] == F[i-1][j]-b)
+                fGapSize[i][j] = fGapSize[i-1][j]+1;
+            else
+                fGapSize[i][j] = 1;
+            return new double[]{F[i][j],fGapSize[i][j]};
+            }
         }
     }
     
@@ -183,57 +195,58 @@ public class Alignment{
 	{
 		String outString1 = "";
 		String outString2 = "";
-		
-		if(option.equals("-l"))
-		{
-			while(i>0 & j>0 && traceBack[i][j]!=0)
-			{
-				if(traceBack[i][j]==DIAG)
-				{
-					outString1 = s1.substring(i-1,i) + outString1;
-					outString2 = s2.substring(j-1,j) + outString2;
-					i--;
-					j--;
-				}
-				else if (traceBack[i][j]==UP)
-				{
-					outString1 = s1.substring(i-1,i) + outString1;
-					outString2 = "_" + outString2;
-					i--;
-				}
-				else
-				{
-					outString1 = "_" + outString1;
-					outString2 = s2.substring(j-1,j) + outString2;
-					j--;
-				}
-			}
-		}
-		else
-		{
-			if(traceBack[i][j]==DIAG)
-			{
-				outString1 = s1.substring(i-1,i) + outString1;
-				outString2 = s2.substring(j-1,j) + outString2;
-				i--;
-				j--;
-			}
-			else if (traceBack[i][j]==UP)
-			{
-				outString1 = s1.substring(i-1,i) + outString1;
-				for(int k=0;k<gapSize[i][j];k++)
-					outString2 = "_" + outString2;
-				i = i-gapSize[i][j];
-			}
-			else
-			{
-				for(int k=0;k<gapSize[i][j];k++)
-					outString1 = "_" + outString1;
-				outString2 = s2.substring(j-1,j) + outString2;
-				j = j-gapSize[i][j];
-			}
-		}
-		
+        while((i>0 || j>0) && traceBack[i][j]!=0)
+        {
+            if(option2.equals("")) //alignment without gaps
+            {
+                if(option1.equals("-l") && (i==0 || j==0))
+                    break;
+                if(traceBack[i][j]==DIAG)
+                {
+                    outString1 = s1.substring(i-1,i) + outString1;
+                    outString2 = s2.substring(j-1,j) + outString2;
+                    i--;
+                    j--;
+                }
+                else if (traceBack[i][j]==UP)
+                {
+                    outString1 = s1.substring(i-1,i) + outString1;
+                    outString2 = "_" + outString2;
+                    i--;
+                }
+                else
+                {
+                    outString1 = "_" + outString1;
+                    outString2 = s2.substring(j-1,j) + outString2;
+                    j--;
+                }
+            } else
+            {
+                if(option1.equals("-l") && (i==0 || j==0))
+                    break;
+                if(traceBack[i][j]==DIAG)
+                {
+                    outString1 = s1.substring(i-1,i) + outString1;
+                    outString2 = s2.substring(j-1,j) + outString2;
+                    i--;
+                    j--;
+                }
+                else if (traceBack[i][j]==UP)
+                {
+                    outString1 = s1.substring(i-1,i) + outString1;
+                    for(int k=0;k<gapSize[i][j];k++)
+                        outString2 = "_" + outString2;
+                    i = i-gapSize[i][j];
+                }
+                else
+                {
+                    for(int k=0;k<gapSize[i][j];k++)
+                        outString1 = "_" + outString1;
+                    outString2 = s2.substring(j-1,j) + outString2;
+                    j = j-gapSize[i][j];
+                }
+            }
+        }
 		System.out.println(outString1);
 		System.out.println(outString2);
 	}

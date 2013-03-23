@@ -13,12 +13,12 @@ public class Main {
 			else if(args[1].equals("-a"))
 			{
 				globalAlignment align = new globalAlignment(args[2],args[3],args[4],option1,"-a");
-				align.globalGap();
+				align.globalAffine();
 			}
 			else
 			{
 				globalAlignment align = new globalAlignment(args[2],args[3],args[4],option1,"");
-				align.globalGap();
+				align.global();
 			}
 		}
 		else if(option1.equals("-l")){

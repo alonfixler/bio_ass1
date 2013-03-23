@@ -2,11 +2,11 @@
 public class globalAlignment extends Alignment{
 
     int i,j,curICell,upICell,diagICell,leftICell;
-    double[] upDCell,diagDCell,leftDCell;
-    double curDCell;
-    public globalAlignment(String scoreMatrixFile,String s1,String s2, String option)
+    double[] eValue,fValue,gValue;
+    double vValue;
+    public globalAlignment(String scoreMatrixFile,String s1,String s2, String option1,String option2)
     {
-        super(scoreMatrixFile,s1,s2,option);
+        super(scoreMatrixFile,s1,s2,option1,option2);
     }
 
     public void global()
@@ -24,7 +24,7 @@ public class globalAlignment extends Alignment{
                 else if (curICell==leftICell) 	traceBack[i][j] = LEFT;
             }
         }
-        print(s1.length(),s2.length(),curICell);
+        tracePath(vValue);
     }
 
     public void globalGap()
@@ -32,36 +32,65 @@ public class globalAlignment extends Alignment{
         initBaseCasesWithGap();
         for(i=1;i<s1.length()+1;i++){
             for(j=1;j<s2.length()+1;j++){
-                leftDCell = F(i,j);
-                upDCell = E(i,j);
-                diagDCell = G(i,j);
-                curDCell = doubleOutMatrix[i][j] = Math.max(diagDCell[0],Math.max(upDCell[0],leftDCell[0]));
+                eValue = E(i,j);
+                fValue = F(i,j);
+                gValue = G(i,j);
+                vValue = doubleOutMatrix[i][j] = Math.max(gValue[0],Math.max(eValue[0],fValue[0]));
 
-                if (curDCell==diagDCell[0]){
+                if (vValue==gValue[0]){
                     traceBack[i][j] = DIAG;
                 }
-                else if (curDCell==upDCell[0]){
-                    for(int n=0;n<upDCell[1];n++){
+                else if (vValue==eValue[0]){
+                    for(int n=0;n<eValue[1];n++){
                         traceBack[i][j-n] = UP;
+                        gapSize[i][j] = (int) eValue[1];
                     }
                 }
-                else if (curDCell==leftDCell[0]){
-                    for(int m=0;m<leftDCell[1];m++){
+                else if (vValue==fValue[0]){
+                    for(int m=0;m<fValue[1];m++){
                         traceBack[i-m][j] = LEFT;
+                        gapSize[i][j] = (int) fValue[1];
                     }
                 }
             }
         }
+        tracePath(vValue);
     }
 
     public void globalAffine()
     {
+        initBaseCasesWithAffineGap();
+        for(i=1;i<s1.length()+1;i++){
+            for(j=1;j<s2.length()+1;j++){
+                eValue = E(i,j);
+                fValue = F(i,j);
+                gValue = G(i,j);
+                vValue = doubleOutMatrix[i][j] = Math.max(gValue[0],Math.max(eValue[0],fValue[0]));
 
+                if (vValue==gValue[0]){
+                    traceBack[i][j] = DIAG;
+                }
+                else if (vValue==eValue[0]){
+                    for(int n=0;n<eValue[1];n++){
+                        traceBack[i][j-n] = UP;
+                        gapSize[i][j] = (int) eValue[1];
+                    }
+                }
+                else if (vValue==fValue[0]){
+                    for(int m=0;m<fValue[1];m++){
+                        traceBack[i-m][j] = LEFT;
+                        gapSize[i][j] = (int) fValue[1];
+                    }
+                }
+            }
+        }
+        tracePath(vValue);
     }
 
-    public void gapTracePath(double max)
+    public void tracePath(double max)
     {
-
+        print(i,j);
+        System.out.println("Score: "+max);
     }
 
     public double gapPenalty(int k){
@@ -94,42 +123,21 @@ public class globalAlignment extends Alignment{
         }
     }
 
-    public double[] G(int i, int j){
-        return new double[]{doubleOutMatrix[i][j]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],DIAG};
+    public void initBaseCasesWithAffineGap(){
+        intOutMatrix[0][0] = 0;
+        //initialize first row and column
+        j=0;
+        for (i=1;i<s1.length()+1;i++){
+            E[i][j] = intOutMatrix[i][j] =  (int)E(i,0)[0];
+
+        }
+        i=0;
+        for (j=1;j<s2.length()+1;j++){
+            F[i][j] = intOutMatrix[i][j] =  (int)F(0,j)[0];
+        }
     }
 
-    public double[] E(int i, int j){
-        if(j==0){
-            return new double[]{-gapPenalty(i),i};
-        }
-        else{
-            double max=Double.MIN_VALUE,temp,kVal=0;
-            for(int k=1;k<j;k++){
-                temp = doubleOutMatrix[i][k]+gapPenalty(j-k);
-                if(max < temp){
-                    max = temp;
-                    kVal = k;
-                }
-            }
-            return new double[]{max,kVal};
-        }
-    }
-    public double[] F(int i, int j){
-        if(i==0){
-            return new double[]{-gapPenalty(j),j};
-        }
-        else{
-            double max=Double.MIN_VALUE,temp,kVal=0;
-            for(int k=1;k<i;k++){
-                temp = doubleOutMatrix[k][j]+gapPenalty(i-k);
-                if(max < temp){
-                    max = temp;
-                    kVal = k;
-                }
-            }
-            return new double[]{max,kVal};
-        }
-    }
+
 
 
 }
