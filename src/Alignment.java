@@ -41,7 +41,7 @@ public class Alignment{
 		letters.put("*",6);
 		scoreMatrix = new char [7][7];
 		this.option = option;
-		if(option.equals("-p"))
+		if(option.equals("-p"))		// if we're in the arbitrary gap functio we'll init a double output matrix
 		{
 			doubleOutMatrix = new double[s1.length()+1][s2.length()+1];
 			gapSize = new int[s1.length()+1][s2.length()+1];
@@ -55,8 +55,8 @@ public class Alignment{
 			F = new int[s1.length()+1][s2.length()+1];
 			fGapSize = new int[s1.length()+1][s2.length()+1];
 		}
-		else
-			intOutMatrix = new int[s1.length()+1][s2.length()+1];
+		else					// if we're in the regular local alignment we'll init an int output matrix
+			intOutMatrix = new int[s1.length()+1][s2.length()+1];		
 		traceBack = new byte[s1.length()+1][s2.length()+1];
 		
 		
@@ -136,7 +136,7 @@ public class Alignment{
             }
             else
             {
-            	E[i][j] = Math.max(E[i][j-1],intOutMatrix[i][j-1]) -b;
+            	E[i][j] = Math.max(E[i][j-1],intOutMatrix[i][j-1]-a) -b;
             	if(E[i][j] == E[i][j-1]-b)
             		eGapSize[i][j] = eGapSize[i][j-1]+1;
             	else
@@ -165,7 +165,7 @@ public class Alignment{
         	}
         	else
         	{
-        		F[i][j] = Math.max(F[i-1][j],intOutMatrix[i-1][j]) -b;
+        		F[i][j] = Math.max(F[i-1][j],intOutMatrix[i-1][j]-a) -b;
             	if(F[i][j] == E[i-1][j]-b)
             		fGapSize[i][j] = fGapSize[i-1][j]+1;
             	else
