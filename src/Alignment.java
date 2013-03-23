@@ -22,9 +22,9 @@ public class Alignment{
 	int a;
 	int b;
 	int [][] E;
-	int [][] eGapSize;
+	int eGapSize;
 	int [][] F;
-	int [][] fGapSize;
+	int fGapSize;
 	String option1,option2;
 	
 	public Alignment(String scoreMatrixFile,String s1,String s2,String option1, String option2)
@@ -53,9 +53,7 @@ public class Alignment{
 			intOutMatrix = new int[s1.length()+1][s2.length()+1];
 			gapSize = new int[s1.length()+1][s2.length()+1];
 			E = new int[s1.length()+1][s2.length()+1];
-			eGapSize = new int[s1.length()+1][s2.length()+1];
 			F = new int[s1.length()+1][s2.length()+1];
-			fGapSize = new int[s1.length()+1][s2.length()+1];
 		}
 		else					// if we're in the regular local alignment we'll init an int output matrix
 			intOutMatrix = new int[s1.length()+1][s2.length()+1];		
@@ -90,17 +88,15 @@ public class Alignment{
 					}
 					lineIndex++;
 				}
-				
-				if(option2.equals("-a"))
+			  }
+			  if(option2.equals("-a"))
 				{
-					strLine = br.readLine();
 					strLine = br.readLine();
 					strLine = br.readLine();
 					a = Integer.parseInt(strLine.substring(2));
 					strLine = br.readLine();
 					b = Integer.parseInt(strLine.substring(2));
 				}
-			  }
 			  //Close the input stream
 			  in.close();
 			    }catch (Exception e){//Catch exception if any
@@ -109,7 +105,10 @@ public class Alignment{
 	}
 	
 	public double[] G(int i, int j){
-	        return new double[]{doubleOutMatrix[i][j]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],DIAG};
+		if(option2.equals("-p"))
+	        return new double[]{doubleOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],DIAG};
+		else
+	        return new double[]{intOutMatrix[i-1][j-1]+scoreMatrix[letters.get(s1.charAt(i-1))][letters.get(s2.charAt(j-1))],DIAG};
 	    }
 
     public double[] E(int i, int j){
@@ -118,12 +117,12 @@ public class Alignment{
                 return new double[]{gapPenalty(i),i};
             }
             else{
-                double max=Double.MIN_VALUE,temp,kVal=0;
+                double max=-Double.MAX_VALUE,temp,kVal=0;
                 for(int k=0;k<j;k++){
                     temp = doubleOutMatrix[i][k]+gapPenalty(j-k);
                     if(max < temp){
                         max = temp;
-                        kVal = k;
+                        kVal = j-k;
                     }
                 }
                 return new double[]{max,kVal};
@@ -137,10 +136,15 @@ public class Alignment{
             else{
             E[i][j] = Math.max(E[i][j-1],intOutMatrix[i][j-1]-a) -b;
                 if(E[i][j] == E[i][j-1]-b)
-                    eGapSize[i][j] = eGapSize[i][j-1]+1;
+                {
+                	if(traceBack[i][j-1] == LEFT)
+                		eGapSize = gapSize[i][j-1]+1;
+                	else
+                		eGapSize = 1;
+                }
                 else
-                    eGapSize[i][j] = 1;
-            return new double[]{E[i][j],eGapSize[i][j]};
+                    eGapSize = 1;
+            return new double[]{E[i][j],eGapSize};
             }
         }
     }
@@ -152,12 +156,12 @@ public class Alignment{
                 return new double[]{gapPenalty(j),j};
             }
             else{
-	            double max=Double.MIN_VALUE,temp,kVal=0;
+	            double max=-Double.MAX_VALUE,temp,kVal=0;
 	            for(int k=0;k<i;k++){
 	                temp = doubleOutMatrix[k][j]+gapPenalty(i-k);
 	                if(max < temp){
 	                    max = temp;
-	                    kVal = k;
+	                    kVal = i-k;
 	                }
 	            }
 	            return new double[]{max,kVal};
@@ -171,10 +175,15 @@ public class Alignment{
             else{
             F[i][j] = Math.max(F[i-1][j],intOutMatrix[i-1][j]-a) -b;
             if(F[i][j] == F[i-1][j]-b)
-                fGapSize[i][j] = fGapSize[i-1][j]+1;
+            {
+            	if(traceBack[i-1][j] == UP)
+            		fGapSize = gapSize[i-1][j]+1;
+            	else
+            		fGapSize = 1;
+            }
             else
-                fGapSize[i][j] = 1;
-            return new double[]{F[i][j],fGapSize[i][j]};
+                fGapSize = 1;
+            return new double[]{F[i][j],fGapSize};
             }
         }
     }

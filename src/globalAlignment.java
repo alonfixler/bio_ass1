@@ -41,16 +41,12 @@ public class globalAlignment extends Alignment{
                     traceBack[i][j] = DIAG;
                 }
                 else if (vValue==eValue[0]){
-                    for(int n=0;n<eValue[1];n++){
-                        traceBack[i][j-n] = UP;
-                        gapSize[i][j] = (int) eValue[1];
-                    }
+                    traceBack[i][j] = LEFT;
+                    gapSize[i][j] = (int) eValue[1];
                 }
                 else if (vValue==fValue[0]){
-                    for(int m=0;m<fValue[1];m++){
-                        traceBack[i-m][j] = LEFT;
-                        gapSize[i][j] = (int) fValue[1];
-                    }
+                    traceBack[i][j] = UP;
+                    gapSize[i][j] = (int) fValue[1];
                 }
             }
         }
@@ -65,7 +61,7 @@ public class globalAlignment extends Alignment{
                 eValue = E(i,j);
                 fValue = F(i,j);
                 gValue = G(i,j);
-                vValue = doubleOutMatrix[i][j] = Math.max(gValue[0],Math.max(eValue[0],fValue[0]));
+                vValue = intOutMatrix[i][j] = (int) Math.max(gValue[0],Math.max(eValue[0],fValue[0]));
 
                 if (vValue==gValue[0]){
                     traceBack[i][j] = DIAG;
@@ -119,11 +115,13 @@ public class globalAlignment extends Alignment{
         for (i=1;i<s1.length()+1;i++){
             doubleOutMatrix[i][j] =  gapPenalty(i);
             traceBack[i][j] = UP;
+            gapSize[i][j] = i;
         }
         i=0;
         for (j=1;j<s2.length()+1;j++){
             doubleOutMatrix[i][j] =  gapPenalty(j);
             traceBack[i][j] = LEFT;
+            gapSize[i][j] = j;
         }
     }
 
@@ -133,11 +131,13 @@ public class globalAlignment extends Alignment{
         j=0;
         for (i=1;i<s1.length()+1;i++){
             E[i][j] = intOutMatrix[i][j] =  (int)E(i,0)[0];
+            gapSize[i][j] = i;
             traceBack[i][j] = UP;
         }
         i=0;
         for (j=1;j<s2.length()+1;j++){
             F[i][j] = intOutMatrix[i][j] =  (int)F(0,j)[0];
+            gapSize[i][j] = j;
             traceBack[i][j] = LEFT;
         }
     }
