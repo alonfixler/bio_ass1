@@ -10,7 +10,7 @@ public class globalAlignment extends Alignment{
         super(scoreMatrixFile,s1,s2,option1,option2);
     }
 
-    public void global()   //global alignment without gaps
+    public void global() throws RuntimeException  //global alignment without gaps
     {
         initBaseCases();   //initialize the first row and column (base cases)
         for(i=1;i<s1.length()+1;i++){     //iterate over the table row after row starting from (1,1)
@@ -36,22 +36,22 @@ public class globalAlignment extends Alignment{
                 eValue = E(i,j);   //Insert Case - with Gap
                 fValue = F(i,j);   //Delete Case - With Gap
                 gValue = G(i,j);   //Replace/Match Case
-                vValue = doubleOutMatrix[i][j] = Math.max(gValue[0],Math.max(eValue[0],fValue[0])); //current cell get the max value
+                doubleOutMatrix[i][j] = Math.max(gValue[0],Math.max(eValue[0],fValue[0])); //current cell get the max value
 
-                if (vValue==gValue[0]){         //check which neighbour is the parent and mark path for trace
+                if (doubleOutMatrix[i][j]==gValue[0]){         //check which neighbour is the parent and mark path for trace
                     traceBack[i][j] = DIAG;
                 }
-                else if (vValue==eValue[0]){
+                else if (doubleOutMatrix[i][j]==eValue[0]){
                     traceBack[i][j] = LEFT;
                     gapSize[i][j] = (int) eValue[1];    //check the gap size
                 }
-                else if (vValue==fValue[0]){
+                else if (doubleOutMatrix[i][j]==fValue[0]){
                     traceBack[i][j] = UP;
                     gapSize[i][j] = (int) fValue[1];    //check the gap size
                 }
             }
         }
-        tracePath(vValue);   //print the alignment and score
+        tracePath(doubleOutMatrix[s1.length()][s2.length()]);   //print the alignment and score
     }
 
     public void globalAffine()
@@ -62,18 +62,18 @@ public class globalAlignment extends Alignment{
                 eValue = E(i,j);       //Insert Case - with Affine Gap
                 fValue = F(i,j);       //Delete Case - With Affine Gap
                 gValue = G(i,j);        //Replace/Match Case
-                vValue = intOutMatrix[i][j] = (int) Math.max(gValue[0],Math.max(eValue[0],fValue[0]));
+                intOutMatrix[i][j] = (int) Math.max(gValue[0],Math.max(eValue[0],fValue[0]));
 
-                if (vValue==gValue[0]){         //check which neighbour is the parent and mark path for trace
+                if (intOutMatrix[i][j]==gValue[0]){         //check which neighbour is the parent and mark path for trace
                     traceBack[i][j] = DIAG;
                 }
-                else if (vValue==eValue[0]){
+                else if (intOutMatrix[i][j]==eValue[0]){
                     for(int n=0;n<eValue[1];n++){
                         traceBack[i][j-n] = UP;
                         gapSize[i][j] = (int) eValue[1];   //check the gap size
                     }
                 }
-                else if (vValue==fValue[0]){
+                else if (intOutMatrix[i][j]==fValue[0]){
                     for(int m=0;m<fValue[1];m++){
                         traceBack[i-m][j] = LEFT;
                         gapSize[i][j] = (int) fValue[1];   //check the gap size
@@ -81,7 +81,7 @@ public class globalAlignment extends Alignment{
                 }
             }
         }
-        tracePath(vValue);  //print the alignment and score
+        tracePath(intOutMatrix[s1.length()][s2.length()]);  //print the alignment and score
     }
 
     public void tracePath(double max)  //trace the alignment path according to the traceBack & gapSizes matrices
@@ -90,11 +90,7 @@ public class globalAlignment extends Alignment{
         System.out.println("Score: "+max);
     }
 
-    public double gapPenalty(int k){   //The gap penalty function
-        return (Math.log(k)-10);
-    }
-
-    public void initBaseCases(){    //initialize the first row & column (base cases) - without gaps
+    public void initBaseCases() throws RuntimeException{    //initialize the first row & column (base cases) - without gaps
         intOutMatrix[0][0] = 0;
         j=0;
         for (i=1;i<s1.length()+1;i++){
@@ -110,16 +106,22 @@ public class globalAlignment extends Alignment{
 
     public void initBaseCasesWithGap(){   //initialize the first row & column (base cases) - with gaps
         doubleOutMatrix[0][0] = 0;
+        int size = Math.max(s1.length(), s2.length());
+        gaps = new double[size+1];
+        gaps[0]=0;
+        for (int i = 1; i <= size; i++) {   //initialize the gap values to save calculating them again later
+           gaps[i] = gapPenalty(i);
+        }
         //initialize first row and column
         j=0;
         for (i=1;i<s1.length()+1;i++){
-            doubleOutMatrix[i][j] =  gapPenalty(i);
+            doubleOutMatrix[i][j] =  -gaps[i];
             traceBack[i][j] = UP;
             gapSize[i][j] = i;
         }
         i=0;
         for (j=1;j<s2.length()+1;j++){
-            doubleOutMatrix[i][j] =  gapPenalty(j);
+            doubleOutMatrix[i][j] =  -gaps[j];
             traceBack[i][j] = LEFT;
             gapSize[i][j] = j;
         }
@@ -127,16 +129,22 @@ public class globalAlignment extends Alignment{
 
     public void initBaseCasesWithAffineGap(){   //initialize the first row & column (base cases) - with Affine gaps
         intOutMatrix[0][0] = 0;
+        int size = Math.max(s1.length(), s2.length());
+        int[] gaps = new int[size+1];
+        gaps[0]=0;
+        for (int i = 1; i <= size; i++) {        //initialize the gap values to save calculating them again later
+            gaps[i] = (a+(i*b));
+        }
         //initialize first row and column
         j=0;
         for (i=1;i<s1.length()+1;i++){
-            E[i][j] = intOutMatrix[i][j] =  (int)E(i,0)[0];
+            E[i][j] = intOutMatrix[i][j] =  -gaps[i];
             gapSize[i][j] = i;
             traceBack[i][j] = UP;
         }
         i=0;
         for (j=1;j<s2.length()+1;j++){
-            F[i][j] = intOutMatrix[i][j] =  (int)F(0,j)[0];
+            F[i][j] = intOutMatrix[i][j] =  -gaps[j];
             gapSize[i][j] = j;
             traceBack[i][j] = LEFT;
         }
